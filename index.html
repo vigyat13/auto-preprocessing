@@ -2,11 +2,22 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>AutoCleanML</title>
+    <title>AutoCleanML - Intelligent Data Pipeline</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- ✅ Tailwind CDN (yes, warning in console, but works and is fine for now) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Optional: base font -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
   </head>
-  <body>
+  <body class="bg-slate-900 text-slate-50 font-[Inter]">
     <div id="root"></div>
+
+    <!-- ✅ Vite entry -->
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
