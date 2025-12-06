@@ -22,7 +22,7 @@ import {
 } from "lucide-react";
 import Button from "./ui/Button";
 
-// ✅ NOTE: imports from ../services, NOT ../src/services
+// All services imports from ../services (never ../src/services)
 import {
   simulateCleaning,
   getHeuristicConfig,
@@ -54,21 +54,19 @@ const ResultsView: React.FC<ResultsViewProps> = ({
   const [aiConfigUsed, setAiConfigUsed] = useState<CleaningConfig | null>(null);
   const [editableCode, setEditableCode] = useState(run.pythonSnippet);
 
+  // keep textarea in sync with new runs
   useEffect(() => {
     setEditableCode(run.pythonSnippet);
   }, [run.pythonSnippet]);
 
+  // compute benchmark stats for Raw vs User vs AI config
   useEffect(() => {
     const fetchComparison = async () => {
       if (!originalProfile) return;
 
-      // 1. Raw Stats (Simulate with null config)
       const rawStats = simulateCleaning(originalProfile, null);
-
-      // 2. User Stats (Current Run)
       const userStats = simulateCleaning(originalProfile, run.config);
 
-      // 3. AI Stats – start with heuristic
       const heuristicConfig = getHeuristicConfig(originalProfile);
       let aiStats = simulateCleaning(originalProfile, heuristicConfig);
       setAiConfigUsed(heuristicConfig);
@@ -79,7 +77,6 @@ const ResultsView: React.FC<ResultsViewProps> = ({
         ai: aiStats,
       });
 
-      // Try Gemini config
       try {
         const geminiConfig = await getRecommendedConfig(originalProfile);
         if (geminiConfig) {
@@ -96,9 +93,12 @@ const ResultsView: React.FC<ResultsViewProps> = ({
   }, [run, originalProfile]);
 
   const isUserOptimal =
-    stats.user && stats.ai && stats.user.qualityScore >= stats.ai.qualityScore;
+    !!stats.user &&
+    !!stats.ai &&
+    stats.user.qualityScore >= stats.ai.qualityScore;
+
   const scoreDiff =
-    (stats.ai?.qualityScore || 0) - (stats.user?.qualityScore || 0);
+    (stats.ai?.qualityScore ?? 0) - (stats.user?.qualityScore ?? 0);
 
   const handleDownloadCSV = () => {
     if (!rawContent) {
@@ -400,10 +400,7 @@ ${editableCode}
               {!isUserOptimal && aiConfigUsed && (
                 <div className="mt-6 pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between bg-purple-50 p-4 rounded-lg gap-4 border border-purple-100 shadow-sm">
                   <div className="flex items-center text-sm text-purple-800">
-                    <Sparkles
-                      size={18}
-                      className="mr-2 text-purple-600"
-                    />
+                    <Sparkles size={18} className="mr-2 text-purple-600" />
                     <span>
                       <span className="font-semibold">
                         Optimize your pipeline:
@@ -481,7 +478,7 @@ ${editableCode}
                     Engineering Intelligence
                   </h3>
                   <p className="text-xs text-indigo-600 font-medium">
-                    Powered by Gemini 2.5 Flash
+                    Powered by Gemini 2.5 Pro
                   </p>
                 </div>
               </div>
@@ -547,7 +544,13 @@ ${editableCode}
                         {...props}
                       />
                     ),
-                    code: ({ node, inline, className, children, ...props }: any) => {
+                    code: ({
+                      node,
+                      inline,
+                      className,
+                      children,
+                      ...props
+                    }: any) => {
                       if (inline) {
                         return (
                           <code
