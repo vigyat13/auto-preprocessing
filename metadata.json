@@ -1,0 +1,5 @@
+{
+  "name": "AutoCleanML",
+  "description": "A full-stack style ML data-cleaning pipeline dashboard. Upload datasets, configure preprocessing rules, and receive AI-powered suggestions for feature engineering and data quality improvements.",
+  "requestFramePermissions": []
+}
